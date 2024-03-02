@@ -94,3 +94,20 @@ func (tm *TaskModel) CreateTask(username string, taskData Task) error {
 	}
 	return nil
 }
+
+func (tm *TaskModel) UpdateTask(taskID uint, updatedTask Task) error {
+
+	var existingTask Task
+	if err := tm.Connection.First(&existingTask, taskID).Error; err != nil {
+		return err
+	}
+
+	existingTask.Nama = updatedTask.Nama
+	existingTask.taskname = updatedTask.taskname
+
+	if err := tm.Connection.Save(&existingTask).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

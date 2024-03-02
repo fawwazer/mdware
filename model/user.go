@@ -12,13 +12,17 @@ type User struct {
 }
 
 type Task struct {
-	Hp       uint   `json:"hp", form:"hp"`
-	UserHp   uint   `json:"userhp", form:"userhp"`
+	Hp       int    `json:"hp", form:"hp"`
+	UserHp   int    `json:"userhp", form:"userhp"`
 	Nama     string `json:"name" form:"name"`
 	taskname string `json:"task" form:"task"`
 }
 
 type UserModel struct {
+	Connection *gorm.DB
+}
+
+type TaskModel struct {
 	Connection *gorm.DB
 }
 
@@ -68,4 +72,25 @@ func (um *UserModel) Login(hp int, password string) (User, error) {
 		return User{}, err
 	}
 	return result, nil
+}
+
+func (um *UserModel) GetUserIDByUsername(hp int) (User, error) {
+	var user User
+	if err := um.Connection.Where("hp = ?", hp).First(&user).Error; err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
+func (tm *TaskModel) CreateTask(username string, taskData Task) error {
+	var user User
+	if err := tm.Connection.Where("username= ?", username).First(&user).Error; err != nil {
+		return err
+	}
+	taskData.UserHp = user.Hp
+
+	if err := tm.Connection.Create(&taskData).Error; err != nil {
+		return err
+	}
+	return nil
 }

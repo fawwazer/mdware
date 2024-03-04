@@ -12,10 +12,12 @@ type User struct {
 }
 
 type Task struct {
-	Hp       int    `json:"hp", form:"hp"`
-	UserHp   int    `json:"userhp", form:"userhp"`
+	gorm.Model
+	Hp       int    `json:"hp" form:"hp"`
+	UserHp   int    `json:"userhp" form:"userhp"`
 	Nama     string `json:"name" form:"name"`
 	taskname string `json:"task" form:"task"`
+	User     User   `gorm:"foreignKey:UserHp"`
 }
 
 type UserModel struct {
@@ -34,6 +36,11 @@ func (um *UserModel) AddUser(newData User) error {
 	return nil
 }
 
+func NewUserModel(db *gorm.DB) *UserModel {
+	return &UserModel{
+		Connection: db,
+	}
+}
 func (um *UserModel) CekUser(hp string) bool {
 	var data User
 	if err := um.Connection.Where("Hp = ?", hp).First(&data).Error; err != nil {
@@ -96,7 +103,6 @@ func (tm *TaskModel) CreateTask(username string, taskData Task) error {
 }
 
 func (tm *TaskModel) UpdateTask(taskID uint, updatedTask Task) error {
-
 	var existingTask Task
 	if err := tm.Connection.First(&existingTask, taskID).Error; err != nil {
 		return err

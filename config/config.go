@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"mdware/model"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -21,6 +22,7 @@ type AppConfig struct {
 
 func AssignEnv(c AppConfig) (AppConfig, bool) {
 	var missing = false
+
 	if val, found := os.LookupEnv("DBUsername"); found {
 		c.DBUsername = val
 	} else {
@@ -51,7 +53,6 @@ func AssignEnv(c AppConfig) (AppConfig, bool) {
 	} else {
 		missing = true
 	}
-
 	return c, missing
 }
 
@@ -63,16 +64,19 @@ func InitConfig() AppConfig {
 		godotenv.Load(".env")
 		result, _ = AssignEnv(result)
 	}
+
 	return result
 }
 
 func InitSQL(c AppConfig) *gorm.DB {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", c.DBUsername,
-		c.DBPassword, c.DBHost, c.DBPort, c.DBName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", c.DBUsername, c.DBPassword, c.DBHost, c.DBPort, c.DBName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		fmt.Println("terjadi sebuah kesalahan", err.Error())
+		fmt.Println("terjadi error", err.Error())
 		return nil
 	}
+
+	db.AutoMigrate(&model.User{})
+
 	return db
 }

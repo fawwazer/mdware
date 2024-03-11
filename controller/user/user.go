@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"mdware/helper"
 	"mdware/middlewares"
-	"mdware/model"
+	model "mdware/model/user"
 
 	"log"
 	"net/http"
@@ -40,6 +40,7 @@ func (us *UserController) Register() echo.HandlerFunc {
 		var processInput model.User
 		processInput.Hp = input.Hp
 		processInput.Nama = input.Nama
+		processInput.Email = input.Email
 		processInput.Password = input.Password
 
 		err = us.Model.AddUser(processInput)

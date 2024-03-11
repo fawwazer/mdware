@@ -8,5 +8,6 @@ type LoginRequest struct {
 type RegisterRequest struct {
 	Nama     string `json:"nama" form:"nama" validate:"required"`
 	Hp       string `json:"hp" form:"hp" validate:"required,max=13,min=10"`
+	Email    string `json:"email" form:"email" validate:"required"`
 	Password string `json:"password" form:"password" validate:"required"`
 }

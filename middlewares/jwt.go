@@ -4,10 +4,10 @@ import (
 	"mdware/config"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJWT(hp int) (string, error) {
+func GenerateJWT(hp string) (string, error) {
 	var data = jwt.MapClaims{}
 	// custom data
 	data["hp"] = hp
@@ -24,4 +24,14 @@ func GenerateJWT(hp int) (string, error) {
 	}
 
 	return result, nil
+}
+
+func DecodeToken(token *jwt.Token) string {
+	var result string
+	var claim = token.Claims.(jwt.MapClaims)
+
+	if val, found := claim["hp"]; found {
+		result = val.(string)
+	}
+	return result
 }

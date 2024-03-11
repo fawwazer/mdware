@@ -2,7 +2,8 @@ package config
 
 import (
 	"fmt"
-	"mdware/model"
+	"mdware/model/task"
+	"mdware/model/user"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -76,7 +77,7 @@ func InitSQL(c AppConfig) *gorm.DB {
 		return nil
 	}
 
-	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&user.User{}, &task.Task{})
 
 	return db
 }
